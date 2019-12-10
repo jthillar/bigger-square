@@ -41,10 +41,13 @@ def checkFileAndSaveObstacle(plate):
     plateSplite = plate.split('x\n')
 
     if len(plateSplite) != 2:
-        raise ValueError('No plate in file')
+        print('Error File : No plate in file')
+        exit()
+
     nLine = checkFirstLine(plateSplite[0])
     if nLine is None or nLine == 0:
-        raise ValueError('No plate in file')
+        print('Error File : No plate in file')
+        exit()
 
     nCol = None
     nColTemp = 0
@@ -54,8 +57,8 @@ def checkFileAndSaveObstacle(plate):
     # On verifie qu'il y a bien les bons éléments dans le plateau et on vérifie que le nombre de ligne correspond à celui d'entrée
     for i, e in enumerate(plateSplite[1]):
         if e not in ['.', 'o', '\n']:
-            raise ValueError('Element of plate is wrong')
-
+            print('Error File : Element of plate is wrong')
+            exit()
         if e != '\n':
             nColTemp += 1
 
@@ -65,13 +68,15 @@ def checkFileAndSaveObstacle(plate):
                 nColTemp = 0
                 nLineTemp += 1
             elif nCol is not None and nColTemp != nCol:
-                raise ValueError('Error in columns')
+               print('Error File : Error in columns, element is missing')
+               exit()
             else:
                 nColTemp = 0
                 nLineTemp += 1
 
     if nLine != nLineTemp:
-        raise ValueError('No correspondance in number of line')
+        print('Error File : No correspondance in number of line')
+        exit()
 
     plate = plateSplite[1].replace('\n', '') # C'est un peu barbare, mais cela me simplifiait le travail de ne pas travail avec les retours lignes
     # On récupère dans un vecteur les positions des obstacles
