@@ -40,12 +40,12 @@ def checkFileAndSaveObstacle(plate):
     firstLine = plate.split('\n')[0]
 
     if len(firstLine) < 4:
-        print('Error File : No plate in file')
+        print('Map Error', end='')
         exit()
 
     nLine, emptyElement, obstacleElement, squareElement = checkFirstLine(firstLine)
     if nLine is None or nLine == 0:
-        print('Error File : No plate in file')
+        print('Map Error', end='')
         exit()
 
     nCol = None
@@ -57,7 +57,7 @@ def checkFileAndSaveObstacle(plate):
     # On verifie qu'il y a bien les bons éléments dans le plateau et on vérifie que le nombre de ligne correspond à celui d'entrée
     for i, e in enumerate(plate):
         if e not in [emptyElement, obstacleElement, '\n']:
-            print('Error File : Element of plate is wrong')
+            print('Map Error', end='')
             exit()
         if e != '\n':
             nColTemp += 1
@@ -68,14 +68,14 @@ def checkFileAndSaveObstacle(plate):
                 nColTemp = 0
                 nLineTemp += 1
             elif nCol is not None and nColTemp != nCol:
-               print('Error File : Error in columns, element is missing')
+               print('Map Error', end='')
                exit()
             else:
                 nColTemp = 0
                 nLineTemp += 1
 
-    if nLine != nLineTemp:
-        print('Error File : No correspondance in number of line')
+    if nLine != nLineTemp or nLine < 1 or nCol < 2:
+        print('Map Error', end='')
         exit()
 
     plate = plate.replace('\n', '') # C'est un peu barbare, mais cela me simplifiait le travail de ne pas travail avec les retours lignes
@@ -142,6 +142,9 @@ if __name__ == '__main__':
         exit()
 
     for i in range(1, len(sys.argv)):
-        find_square(sys.argv[i])
+        try:
+            find_square(sys.argv[i])
+        except:
+            pass
         if i != len(sys.argv) - 1:
             print('\n')
