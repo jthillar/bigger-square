@@ -3,7 +3,7 @@
 
 import sys
 
-def printSquare(plate, square, weight):
+def printSquare(plate, square, weight, squareElement):
 
     # On commence par récupéré les positions du carrées
     plateToPrint = str()
@@ -13,38 +13,37 @@ def printSquare(plate, square, weight):
 
     for i, e in enumerate(plate):
         if i in squarePosition:
-            plateToPrint += 'x'
+            plateToPrint += squareElement
         else:
             plateToPrint += e
         if (i + 1) % weight == 0 and i + 1 != len(plate):
             plateToPrint += '\n'
 
-    print(plateToPrint)
+    print(plateToPrint, end='')
 
 
 def checkFirstLine(firstLine):
 
-    if len(firstLine) < 3:
-        return None
-    if firstLine[-2:] != '.o':
-        return None
+    emptyElement = firstLine[-3]
+    obstacleElement = firstLine[-2]
+    squareElement = firstLine[-1]
     try:
-        n = int(firstLine.split('.')[0])
-        return n
+        n = int(firstLine.split(emptyElement)[0])
+        return n, emptyElement, obstacleElement, squareElement
     except:
-        return None
+        return None, emptyElement, obstacleElement, squareElement
 
 
 def checkFileAndSaveObstacle(plate):
 
     # On commence Par checker la première ligne
-    plateSplite = plate.split('x\n')
+    firstLine = plate.split('\n')[0]
 
-    if len(plateSplite) != 2:
+    if len(firstLine) < 4:
         print('Error File : No plate in file')
         exit()
 
-    nLine = checkFirstLine(plateSplite[0])
+    nLine, emptyElement, obstacleElement, squareElement = checkFirstLine(firstLine)
     if nLine is None or nLine == 0:
         print('Error File : No plate in file')
         exit()
@@ -53,10 +52,11 @@ def checkFileAndSaveObstacle(plate):
     nColTemp = 0
     nLineTemp = 0
     obstacleVec = list()
+    plate = plate.split(squareElement+'\n')[1]
 
     # On verifie qu'il y a bien les bons éléments dans le plateau et on vérifie que le nombre de ligne correspond à celui d'entrée
-    for i, e in enumerate(plateSplite[1]):
-        if e not in ['.', 'o', '\n']:
+    for i, e in enumerate(plate):
+        if e not in [emptyElement, obstacleElement, '\n']:
             print('Error File : Element of plate is wrong')
             exit()
         if e != '\n':
@@ -78,19 +78,19 @@ def checkFileAndSaveObstacle(plate):
         print('Error File : No correspondance in number of line')
         exit()
 
-    plate = plateSplite[1].replace('\n', '') # C'est un peu barbare, mais cela me simplifiait le travail de ne pas travail avec les retours lignes
+    plate = plate.replace('\n', '') # C'est un peu barbare, mais cela me simplifiait le travail de ne pas travail avec les retours lignes
     # On récupère dans un vecteur les positions des obstacles
     for i, e in enumerate(plate):
         if e == 'o':
             obstacleVec.append(i)
-    return plate, obstacleVec, nLine, nCol
+    return plate, obstacleVec, nLine, nCol, squareElement
 
 
 def find_square(filePath):
 
     plateFile = open(filePath, 'r')
     plate = plateFile.read()
-    plate, obstacleVec, height, weight = checkFileAndSaveObstacle(plate)
+    plate, obstacleVec, height, weight, squareElement = checkFileAndSaveObstacle(plate)
 
     # Varible qui garde en mémoire le plus gros carré
     #  - start : pointe haute gauche du carré
@@ -133,7 +133,7 @@ def find_square(filePath):
 
         i += 1
 
-    printSquare(plate, square, weight)
+    printSquare(plate, square, weight, squareElement)
 
 
 if __name__ == '__main__':
@@ -143,3 +143,5 @@ if __name__ == '__main__':
 
     for i in range(1, len(sys.argv)):
         find_square(sys.argv[i])
+        if i != len(sys.argv) - 1:
+            print('\n')
