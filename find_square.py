@@ -81,15 +81,20 @@ def checkFileAndSaveObstacle(plate):
     plate = plate.replace('\n', '') # C'est un peu barbare, mais cela me simplifiait le travail de ne pas travail avec les retours lignes
     # On récupère dans un vecteur les positions des obstacles
     for i, e in enumerate(plate):
-        if e == 'o':
+        if e == obstacleElement:
             obstacleVec.append(i)
     return plate, obstacleVec, nLine, nCol, squareElement
 
 
 def find_square(filePath):
 
-    plateFile = open(filePath, 'r')
-    plate = plateFile.read()
+    try:
+        plateFile = open(filePath, 'r')
+        plate = plateFile.read()
+    except:
+        print('Map Error', end='')
+        exit()
+
     plate, obstacleVec, height, weight, squareElement = checkFileAndSaveObstacle(plate)
 
     # Varible qui garde en mémoire le plus gros carré
@@ -146,5 +151,5 @@ if __name__ == '__main__':
             find_square(sys.argv[i])
         except:
             pass
-        if i != len(sys.argv) - 1:
-            print('\n')
+        print('\n') if i != len(sys.argv) - 1 else print('')
+
